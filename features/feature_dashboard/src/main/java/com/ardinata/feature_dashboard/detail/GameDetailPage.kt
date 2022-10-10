@@ -15,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class GameDetailPage(
     override val layout: Int = R.layout.page_game_detail
-) : BaseViewBindingFragment<PageGameDetailBinding>(){
+) : BaseViewBindingFragment<PageGameDetailBinding>() {
 
     private val viewModel by viewModels<GameDetailViewModel>()
 
@@ -26,13 +26,20 @@ class GameDetailPage(
     override fun didMount(view: View) {
         super.didMount(view)
         setObserver()
+        initView()
         viewModel.favGameList.execute(Unit)
         viewModel.gameDetails.execute(getGameId().toString())
-        binding?.simpleHeader?.onFavButtonChangeListener = { isFav ->
-            val gameEntity = getGameItem()
-            gameEntity?.let {
-                if (isFav) viewModel.insertFavGame.execute(it)
-                else viewModel.deleteFavGame.execute(it.id)
+    }
+
+    private fun initView() {
+        binding?.simpleHeader?.apply {
+            onBackPressed = { activity?.onBackPressed() }
+            onFavButtonChangeListener = { isFav ->
+                val gameEntity = getGameItem()
+                gameEntity?.let {
+                    if (isFav) viewModel.insertFavGame.execute(it)
+                    else viewModel.deleteFavGame.execute(it.id)
+                }
             }
         }
     }
@@ -41,8 +48,8 @@ class GameDetailPage(
         viewModel.run {
             gameDetails.listen(
                 viewLifecycleOwner,
-                onStart = {showLoading()},
-                onComplete = {closeLoading()},
+                onStart = { showLoading() },
+                onComplete = { closeLoading() },
                 onSuccess = this@GameDetailPage::setGameDetails
             )
             insertFavGame.listen(viewLifecycleOwner)
@@ -56,9 +63,10 @@ class GameDetailPage(
         }
     }
 
-    private fun setGameDetails(detail : GameDetailsEntity){
+    private fun setGameDetails(detail: GameDetailsEntity) {
         binding?.poster?.customSetImage(detail.backgroundImage)
-        binding?.description?.text = HtmlCompat.fromHtml(detail.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        binding?.description?.text =
+            HtmlCompat.fromHtml(detail.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
         binding?.publisher?.text = detail.publishers.firstOrNull()?.name
         binding?.gameTitle?.text = detail.name
         binding?.ratingScore?.text = detail.rating.toString()
