@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_test_language">This Text is in English</string>
+    <string name="page_title" translatable="false">Games For You</string>
+    <string name="page_subtitle" translatable="false">Perqara Test</string>
+    <string name="page_empty_state_title" translatable="false">Game Not Found</string>
+    <string name="game_detail_played" translatable="false">%s played</string>
+    <string name="game_detail_release_date" translatable="false">Release Date : %s</string>
+</resources>
